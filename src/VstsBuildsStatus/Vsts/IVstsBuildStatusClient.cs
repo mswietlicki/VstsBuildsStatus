@@ -10,6 +10,8 @@ namespace VstsBuildsStatus.Vsts
         Task<BuildDefinition> GetBuildDefinition(string project, string name);
         IList<Build> GetBuildDefinitionBuilds(string project, string name);
         Task<Build> GetBuildDefinitionLastBuild(string project, string name);
+        Task<Build> GetBuildDefinitionLastBuild(string project, DefinitionReference def);
+        Task<IEnumerable<Build>> GetBuildDefinitionsLastBuild(string project, IEnumerable<DefinitionReference> defs);
         Task<Build> GetBuildDefinitionLastBuild(string project, int id);
         Task<Build> GetBuildDefinitionLastSuccesfulBuild(string project, string name);
     }

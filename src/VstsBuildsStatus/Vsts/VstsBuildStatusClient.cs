@@ -51,7 +51,19 @@ namespace VstsBuildsStatus.Vsts
         {
             var buildClient = Connection.GetClient<BuildHttpClient>();
             var def = (await buildClient.GetDefinitionsAsync(project, name, DefinitionType.Build)).FirstOrDefault();
-            return def == null ? null : (await buildClient.GetBuildsAsync(project, new[] { def.Id })).FirstOrDefault();
+            return def == null ? null : (await buildClient.GetBuildsAsync(project, new[] { def.Id }, top: 1)).FirstOrDefault();
+        }
+
+        public async Task<Build> GetBuildDefinitionLastBuild(string project, DefinitionReference def)
+        {
+            var buildClient = Connection.GetClient<BuildHttpClient>();
+            return def == null ? null : (await buildClient.GetBuildsAsync(project, new[] { def.Id }, top: 1)).FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<Build>> GetBuildDefinitionsLastBuild(string project, IEnumerable<DefinitionReference> defs)
+        {
+            var buildClient = Connection.GetClient<BuildHttpClient>();
+            return await buildClient.GetBuildsAsync(project, defs.Select(_=>_.Id), maxBuildsPerDefinition: 1);
         }
 
         public async Task<Build> GetBuildDefinitionLastBuild(string project, int id)
