@@ -16,6 +16,8 @@ namespace VstsBuildsStatus.Controllers
         public BuildResult? Result { get; set; }
         public DateTime? StartTime { get; set; }
         public object FinishTime { get; set; }
+
+
     }
     [Route("api/{account}/{project}/build")]
     public class BuildController : Controller
@@ -35,30 +37,25 @@ namespace VstsBuildsStatus.Controllers
 
             var vsts = CreateBuildClient(account);
             var defs = await vsts.GetBuildDefinitions(project);
-            var builds = new List<BuildStatus>();
-            foreach (var def in names.Select(name => defs.FirstOrDefault(_ => _.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase)) ?? new BuildDefinition { Name = name, Id = 0 }))
-            {
-                builds.Add(await GetLastBuild(project, vsts, def));
-            }
-            return builds;
+
+            var lastBuilds = await vsts.GetBuildDefinitionsLastBuild(project,
+                names.Select(name => defs.FirstOrDefault(_ => _.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))).Where(_ => _ != null));
+
+            return names.Select(name => ToBuildStatus(lastBuilds.FirstOrDefault(_ => _.Definition.Name == name)) ?? new BuildStatus { Name = name, Status = Microsoft.TeamFoundation.Build.WebApi.BuildStatus.None });
         }
 
-        private static async Task<BuildStatus> GetLastBuild(string project, IVstsBuildStatusClient vsts, BuildDefinition def)
+        BuildStatus ToBuildStatus(Build build)
         {
-            if (def.Id > 0) {
-                var build = await vsts.GetBuildDefinitionLastBuild(project, def);
-                if (build != null)
-                    return new BuildStatus
-                    {
-                        Name = build.Definition.Name,
-                        Status = build.Status,
-                        Result = build.Result,
-                        StartTime = build.StartTime,
-                        FinishTime = build.FinishTime
-                    };
-            }
-
-            return new BuildStatus { Name = def.Name, Status = Microsoft.TeamFoundation.Build.WebApi.BuildStatus.None };
+            if (build == null)
+                return null;
+            return new BuildStatus
+            {
+                Name = build.Definition.Name,
+                Status = build.Status,
+                Result = build.Result,
+                StartTime = build.StartTime,
+                FinishTime = build.FinishTime
+            };
         }
 
         [Route("simple")]

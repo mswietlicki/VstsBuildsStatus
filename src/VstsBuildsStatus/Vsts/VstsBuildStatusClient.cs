@@ -63,7 +63,8 @@ namespace VstsBuildsStatus.Vsts
         public async Task<IEnumerable<Build>> GetBuildDefinitionsLastBuild(string project, IEnumerable<DefinitionReference> defs)
         {
             var buildClient = Connection.GetClient<BuildHttpClient>();
-            return await buildClient.GetBuildsAsync(project, defs.Select(_=>_.Id), maxBuildsPerDefinition: 1);
+            var builds = await buildClient.GetBuildsAsync(project, defs.Select(_=>_.Id), maxBuildsPerDefinition: 1);
+            return builds;
         }
 
         public async Task<Build> GetBuildDefinitionLastBuild(string project, int id)
