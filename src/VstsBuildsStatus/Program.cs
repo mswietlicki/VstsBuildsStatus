@@ -12,6 +12,7 @@ namespace VstsBuildsStatus
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
                 .UseStartup<Startup>()
+                .UseUrls("http://localhost:5000","http://192.168.1.12:5000")
                 .Build();
 
             host.Run();

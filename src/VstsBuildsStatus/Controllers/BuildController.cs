@@ -68,17 +68,25 @@ namespace VstsBuildsStatus.Controllers
 
         private string GetStatus(BuildStatus buildStatus)
         {
-            if (buildStatus.Status == Microsoft.TeamFoundation.Build.WebApi.BuildStatus.InProgress)
-                return "InProgress";
+            switch (buildStatus.Status)
+            {
+                case Microsoft.TeamFoundation.Build.WebApi.BuildStatus.InProgress:
+                    return "InProgress";
+                case Microsoft.TeamFoundation.Build.WebApi.BuildStatus.NotStarted:
+                    return "NotStarted";
+            }
+
             switch (buildStatus.Result)
             {
                 case BuildResult.Succeeded:
                     return "Succeeded";
                 case BuildResult.Failed:
                     return "Failed";
-                default:
-                    return "Unknown";
+                case BuildResult.Canceled:
+                    return "Canceled";
             }
+
+            return "Unknown";
         }
 
         private VstsBuildStatusClient CreateBuildClient(string account)
