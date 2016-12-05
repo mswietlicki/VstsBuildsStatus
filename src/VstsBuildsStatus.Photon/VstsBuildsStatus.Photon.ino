@@ -121,8 +121,7 @@ uint8_t downloadBuildsStatuses(){
     
     if(response.status != 200) {
         RGB.color(255, 0, 0);
-        Serial.println("Download builds statuses failed!");
-        Serial.println(response.status);
+        Serial.printlnf("Download builds statuses failed: %d", response.status);
         return 0;
     } else {
         RGB.color(0, 0, 0);
@@ -131,6 +130,8 @@ uint8_t downloadBuildsStatuses(){
 }
 
 void readBuildStatusesFromResponseBody(){
+    Serial.println();
+    Serial.println("BuildStatuses:");
     int16_t p = 0, np = 0;
     for (int i = 0; i < arraySize(builds); i++) {
         np = response.body.indexOf(",", p + 1);
@@ -138,26 +139,32 @@ void readBuildStatusesFromResponseBody(){
         if(response.body.lastIndexOf("Failed", np) > p)
         {
             buildsStatus[i] = BUILD_STATUS_FAILED;
+            Serial.printlnf("    %s: %s", builds[i].c_str(), "FAILED");
         }
         else if(response.body.lastIndexOf("InProgress", np) > p)
         {
             buildsStatus[i] = BUILD_STATUS_INPROGRESS;
+            Serial.printlnf("    %s: %s", builds[i].c_str(), "INPROGRESS");
         }
         else if(response.body.lastIndexOf("Succeeded", np) > p)
         {
             buildsStatus[i] = BUILD_STATUS_SUCCEEDED;
+            Serial.printlnf("    %s: %s", builds[i].c_str(), "SUCCEEDED");
         }
         else if(response.body.lastIndexOf("NotStarted", np) > p)
         {
             buildsStatus[i] = BUILD_STATUS_NOTSTARTED;
+            Serial.printlnf("    %s: %s", builds[i].c_str(), "NOTSTARTED");
         }
         else if(response.body.lastIndexOf("Canceled", np) > p)
         {
             buildsStatus[i] = BUILD_STATUS_CANCELED;
+            Serial.printlnf("    %s: %s", builds[i].c_str(), "CANCELED");
         }
         else 
         {
             buildsStatus[i] = BUILD_STATUS_UNKNOWN;
+            Serial.printlnf("    %s: %s", builds[i].c_str(), "UNKNOWN");
         }
         p = np;
     }
