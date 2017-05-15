@@ -1,4 +1,4 @@
-POST http://avengersbuildsstatus.azurewebsites.net/api/softwareone-pc/PyraCloud/build
+POST http://avengersbuildsstatus.azurewebsites.net/api/softwareone-pc/PyraCloud/build/simple
 content-type: application/json
 
 ["int-oci-web-api-deploy-test","int-oci-web-api-deploy-qa","int-oci-web-api-deploy-live","int-oci-web-app-deploy-test","int-oci-web-app-deploy-qa","int-oci-web-app-deploy-live","int-c2c-presence-web-api-test","int-c2c-presence-web-api-qa","int-c2c-presence-web-api-live","int-c2c-messaging-service-test","int-c2c-messaging-service-qa","int-c2c-messaging-service-live","int-c2c-messaging-web-api-test","int-c2c-messaging-web-api-qa","int-c2c-messaging-web-api-live","int-c2c-messaging-web-app-test","int-c2c-messaging-web-app-qa","int-c2c-messaging-web-app-live",]
