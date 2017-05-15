@@ -51,6 +51,10 @@ String builds[] = {
     "int-c2c-messaging-web-app-qa",
     "int-c2c-messaging-web-app-live",
     "ops-automation-publish",
+    "int-rmr-api-test",
+    "int-rmr-api-qa",
+    "int-rmr-web-test",
+    "int-rmr-web-qa",
 };
 String requestBody;
 
@@ -116,9 +120,9 @@ uint8_t downloadBuildsStatuses(){
     request.port = 80;
     request.path = "/api/softwareone-pc/PyraCloud/build/simple";
     request.body = requestBody;
-        
+
     http.post(request, response, headers);
-    
+
     if(response.status != 200) {
         RGB.color(255, 0, 0);
         Serial.printlnf("Download builds statuses failed: %d", response.status);
@@ -135,7 +139,7 @@ void readBuildStatusesFromResponseBody(){
     int16_t p = 0, np = 0;
     for (int i = 0; i < arraySize(builds); i++) {
         np = response.body.indexOf(",", p + 1);
-        
+
         if(response.body.lastIndexOf("Failed", np) > p)
         {
             buildsStatus[i] = BUILD_STATUS_FAILED;
@@ -161,7 +165,7 @@ void readBuildStatusesFromResponseBody(){
             buildsStatus[i] = BUILD_STATUS_CANCELED;
             Serial.printlnf("    %s: %s", builds[i].c_str(), "CANCELED");
         }
-        else 
+        else
         {
             buildsStatus[i] = BUILD_STATUS_UNKNOWN;
             Serial.printlnf("    %s: %s", builds[i].c_str(), "UNKNOWN");
@@ -183,7 +187,7 @@ void loop() {
     if (nextTime > millis()) {
         return;
     }
-    
+
     if(downloadBuildsStatuses()){
         readBuildStatusesFromResponseBody();
     }
